@@ -2,23 +2,17 @@
 import socket
 from Alicefunctions import Alice, generate_random_prime_with_n_bits
 from hand_shake import hand_shake_sever_bob
+from connections import *
 
-
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_host = "0.0.0.0"  # listen on all available network interfaces
-server_port = 1234  # choose a port number
-server_socket.bind((server_host, server_port))
-server_socket.listen()
-print("Waiting for a connection...")
-bob_socket, client_address = server_socket.accept()
-print("Connected to:", client_address)
+alice_Union_socket = Init_Alice_connection()
+bob_socket = Init_Bob_connection()
 
 while True:
     if hand_shake_sever_bob(bob_socket):
-        Alicebit = 1
+        Alicebit = alice_Union_socket.recv(1024).decode()
+        print("Alice bit -- ", Alicebit)
         q = generate_random_prime_with_n_bits(30)
         alice = Alice(Alicebit, q)
-        i = i + 1
         cA_q_g_gk = (
             str(alice.cA)
             + ","
@@ -28,6 +22,7 @@ while True:
             + ","
             + str(alice.gk)
         )
+        
         bob_socket.send(cA_q_g_gk.encode())
         cB = bob_socket.recv(1024).decode()
         cB_tuple = tuple(map(int, cB.strip("()").split(",")))
@@ -39,6 +34,7 @@ while True:
             result = 1
         print(result)
         bob_socket.send(str(result).encode())
+        alice_Union_socket.send(str(result).encode())
 
 bob_socket.close()
 server_socket.close()

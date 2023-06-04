@@ -65,5 +65,5 @@ def union(list,worldSize):
 
 
 if __name__ == '__main__':
-    list = [1, 2, 5]
+    list = [0, 2, 5]
     print(union(list,16))

@@ -1,12 +1,21 @@
 # unionA.py
 import math
 import numpy as np
+import socket
+
+alice_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_host = "localhost"  # Replace with the server's IP address
+server_port = 1235  # Replace with the server's port number
+alice_client_socket.connect((server_host, server_port))
+
 
 def orFunc(b):
+    b = str(int(b)).encode()
     # need to somehow use the server and send its bit to AliceBit constructor
-    b=int(b) 
-    b=b#safeOr(b)
-    return b
+    alice_client_socket.send(b)
+    res = alice_client_socket.recv(1024).decode()
+    print(f"The res is {res}")
+    return int(res)
 
 def union(list,worldSize):
     P=['0','1']  #live bits
@@ -39,4 +48,6 @@ def union(list,worldSize):
 
 if __name__ == '__main__':
     list = [1, 2, 5]
+    list2 = [0,1,5]
+    [0 , 1 , 2 , 5]
     print(union(list,16))
