@@ -1,14 +1,8 @@
 # bob.py
 import socket
 from Bobfunctions import Bob
+from hand_shake import hand_shake_client_bob
 
-def hand_shake_client_bob(server_socket):
-    server_socket.send(b"Ready")
-    Acknowledge = alice_server_socket.recv(1024).decode()
-    if Acknowledge == "Acknowledged":
-        server_socket.send(b"Acknowledged")
-        return True
-    return False
     
         
 alice_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
