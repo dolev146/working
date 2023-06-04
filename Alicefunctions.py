@@ -2,6 +2,20 @@
 from sympy import is_quad_residue, isprime
 import random
 
+def generate_alice_keys(b):
+    q = generate_random_prime_with_n_bits(30)
+    alice = Alice(b, q)
+    cA_q_g_gk = (
+            str(alice.cA)
+            + ","
+            + str(alice.q)
+            + ","
+            + str(alice.g)
+            + ","
+            + str(alice.gk)
+        )
+    return cA_q_g_gk, alice
+
 
 def generate_random_prime_with_n_bits(bits):
     min_value = 2 ** (bits - 1)
@@ -61,21 +75,17 @@ class Alice:
         self.k = random.randint(0, q - 1)
         self.p = 2 * self.q + 1
         self.g = self.find_quadratic_residue()
-        # calculate the encrypted bit
         self.cA, self.q, self.g, self.gk = self.calc_encrypted_bit()
 
     def calc_encrypted_bit(self):
         r = random.randint(2, self.q - 1)
-        # print(f"r={r}")
         if self.bit == 0:
             cA = (pow(self.g, r, self.p), pow(self.g, r * self.k, self.p))
-            # print(f"cA={cA}")
         else:
             cA = (
                 pow(self.g, r, self.p),
                 (self.g * pow(self.g, r * self.k, self.p)) % self.p,
             )
-            # print(f"cA={cA}")
         return cA, self.q, self.g, pow(self.g, self.k, self.p)
 
     def decrypt_message(self, cB):
@@ -87,6 +97,5 @@ class Alice:
             if is_quad_residue(candidate, self.p):
                 return candidate
 
-    # make a function that will print Alice when running print(alice)
     def __str__(self):
         return f"bit={self.bit}, q={self.q}, k={self.k}, p={self.p}, g={self.g}"
